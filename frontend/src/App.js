@@ -2,17 +2,22 @@ import React, { useEffect, useState } from "react";
 import { ethers } from 'ethers';
 import './styles/App.css';
 import { networks } from './utils/networks';
-import contractAbi from './utils/GeoDapp.json';
+// import contractAbi from './utils/GeoDapp.json';
 
 
 const CONTRACT_ADDRESS = '';
 
 
-
-
 const App = () => {
 
   const [currentAccount, setCurrentAccount] = useState("");
+  const [dataName, setDataName] = useState('');
+  const [year, setYear] = useState('');
+  const [description, setDescription] = useState('');
+  const [dataImage, setDataImage] = useState();
+  const [data, setData] = useState('');
+  const [category, setCategory] = useState('');
+  const [price, setPrice] = useState();
   const [status, setStatus] = useState("");
   const [network, setNetwork] = useState("");
   
@@ -70,7 +75,7 @@ const App = () => {
 			try {
 				await window.ethereum.request({
 					method: 'wallet_switchEthereumChain',
-					params: [{ chainId: '0x3'}],
+					params: [{ chainId: '0x4'}],
 				});
 			} catch (error) {
 				if (error.code === 4902) {
@@ -80,14 +85,14 @@ const App = () => {
 							params: [
 								{
 									chainId: '0x3',
-									chainName: 'Ropston Testnet',
-									rpcUrls: ['https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
+									chainName: 'Rinkeby Testnet',
+									rpcUrls: ['https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'],
 									nativeCurrency: {
-										name: "Ropston Test Network",
+										name: "Rinkeby Test Network",
 										symbol: "ETH",
 										decimals: 18
 									},
-									blockExplorerUrls: ["https://ropsten.etherscan.io"],
+									blockExplorerUrls: ["https://rinkeby.etherscan.io"],
 								},
 							],
 						});
@@ -103,28 +108,27 @@ const App = () => {
 	};
 
 
-  const copyrightRegistration = async () => {
-    if(currentAccount) {
-      console.log("Connected Address", currentAccount)
-    }
+//   const copyrightRegistration = async () => {
+//     if(currentAccount) {
+//       console.log("Connected Address", currentAccount)
+//     }
 
-    try {
-      const { ethereum } = window;
+//     try {
+//       const { ethereum } = window;
       
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
+//       if (ethereum) {
+//         const provider = new ethers.providers.Web3Provider(ethereum);
+//         const signer = provider.getSigner();
+//         const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
 
-        console.log("Going to pop wallet now to pay gas...");
-        let tx = await contract.cpRegistration()
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+//         console.log("Going to pop wallet now to pay gas...");
+//         let tx = await contract.cpRegistration()
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   };
   
- 
 
   const renderNotConnectedContainer = () => (
 		<div className='connect-wallet-container'>
@@ -134,6 +138,53 @@ const App = () => {
 			</button>
 		</div>
 	);
+
+	const renderInputForm = () => {
+		return (
+			<div className="form-container">
+				<div className="first-row">
+					<input 
+						type="text"
+						value={dataName}
+						placeholder='Data Name'
+						onChange={e => setDataName(e.target.value)}
+					/>
+				</div>
+
+				<input 
+					type="text"
+					value={year}
+					placeholder='Year of data'
+					onChange={e => setYear(e.target.value)}
+				/>
+
+				<input 
+					type="text"
+					value={description}
+					placeholder='Data Description'
+					onChange={e => setDescription(e.target.value)}
+				/>
+
+				<input 
+					type="file"
+					value={dataImage}
+					placeholder='Upload data image'
+					onChange={e => setDataImage(e.target.value)}
+				/>
+
+				<input 
+					type="file"
+					onChange={e => setData(e.target.value)}
+				/>
+
+				<div className="button-container">
+					<button className='cta-button mint-button' disabled={null} onClick={null}>
+						Set data
+					</button> 
+				</div>
+			</div>
+		)
+	}
 
 
   useEffect(() => {
@@ -145,15 +196,15 @@ const App = () => {
     <div className="App">
       <div className="container">
         <div className="header-container">
-          <p className="header gradient-text">Cool NFT Collection</p>
+          <p className="header gradient-text">GDRM - Decentralized geographic data rights management system </p>
           <p className="sub-text">
-            Each unique. Each beautiful. Discover your NFT today.
+            
           </p>
-
-          
-          <img className='sample' alt="sample Stick Figure Developer NFT" src={sampleDeveloper} />
+        
         </div>
 
+		{!currentAccount && renderNotConnectedContainer()}
+		{currentAccount && renderInputForm()}
         
   
       </div>
